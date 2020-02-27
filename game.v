@@ -61,13 +61,11 @@ pub fn (game mut Game) load_image(key, filename string) {
 		width: w
 		height: h
 	}
-	println('--- ${img.width}, ${img.height}, ${img.id}')
 	game.images[key] = img
 }
 
 pub fn (game &Game) draw_image(key string, x, y int) {
 	img := game.images[key]
-	println('${img.width}, ${img.height}, ${img.id}')
 	game.gg.draw_image(x, y, img.width, img.height, img.id)
 }
 
@@ -106,8 +104,6 @@ fn key_down(wnd voidptr, key, code, action, mods int) {
 
 	scene := game.scenes[game.current_scene]
 	scene.input(key, code, action, mods)
-
-	println('${key}, ${code}, ${action}, ${mods}')
 }
 
 fn create_image(file string) (u32, f32, f32) {
