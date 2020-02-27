@@ -24,8 +24,9 @@ mut:
 	current_scene string
 }
 
-pub fn new(w, h int, title string) &Game {
+pub fn new(w, h int, title string, flip_image bool) &Game {
 	glfw.init_glfw()
+	stbi.set_flip_vertically_on_load(flip_image)
 	mut game := &Game{
 		gg: gg.new_context(gg.Cfg{
 			width: w
