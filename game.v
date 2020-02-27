@@ -8,12 +8,15 @@ import os
 import gl
 import stbi
 
+// Image is used to store the texture-id and the dimensions of the loaded image
 struct Image {
 	id u32
 	width f32
 	height f32
 }
 
+// Game holds all data of the game. The assets, the scenes and the graphics
+// context
 pub struct Game {
 mut:
 	gg         &gg.GG
@@ -24,6 +27,8 @@ mut:
 	current_scene string
 }
 
+// new creates a new Instance of Game. It initilises GLFW, opens the window and
+// it also flips the loaded images if need be.
 pub fn new(w, h int, title string, flip_image bool) &Game {
 	glfw.init_glfw()
 	stbi.set_flip_vertically_on_load(flip_image)
@@ -52,6 +57,8 @@ pub fn new(w, h int, title string, flip_image bool) &Game {
 	return game
 }
 
+// load_image loads an image, creates a texture out of it and stores it in the
+// assets of the game.
 pub fn (game mut Game) load_image(key, filename string) {
 	tex_id, w, h := create_image(filename)
 	if tex_id == 0 {
@@ -65,11 +72,14 @@ pub fn (game mut Game) load_image(key, filename string) {
 	game.images[key] = img
 }
 
+// draw_image takes an image and draws it onto the screen
 pub fn (game &Game) draw_image(key string, x, y int) {
 	img := game.images[key]
 	game.gg.draw_image(x, y, img.width, img.height, img.id)
 }
 
+// run starts the main game. It handles the updates of the active scene and it
+// also renders them.
 pub fn (game &Game) run() {
 	for game.is_running {
 		gg.clear(gx.Black)
@@ -86,6 +96,8 @@ pub fn (game &Game) run() {
 	}
 }
 
+// add_scene adds a new scene to the game. The key allows for an easy switch to
+// different scenes.
 pub fn (game mut Game) add_scene(key string, scene Scener) {
 	if game.current_scene == "" {
 		game.current_scene = key
@@ -93,6 +105,8 @@ pub fn (game mut Game) add_scene(key string, scene Scener) {
 	game.scenes[key] = scene
 }
 
+// key_down handles the keyboard input of the window. It sends the informations
+// to the current active scene.
 fn key_down(wnd voidptr, key, code, action, mods int) {
 	if action != 2 && action != 1 {
 		return
@@ -107,6 +121,8 @@ fn key_down(wnd voidptr, key, code, action, mods int) {
 	scene.input(key, code, action, mods)
 }
 
+// create_image is a slightly modified version of vlib. Not only returns it the
+// tex_id, it also returns the width and the height.
 fn create_image(file string) (u32, f32, f32) {
 	//println('gg create image "$file"')
 	if file.contains('twitch') {
